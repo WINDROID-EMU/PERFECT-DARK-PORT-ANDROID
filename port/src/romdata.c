@@ -10,6 +10,7 @@
 #include "system.h"
 #include "preprocess.h"
 #include "platform.h"
+#include "mod.h"
 
 /**
  * asset files and ROM segments can be replaced by optional external files,
@@ -496,6 +497,20 @@ u8 *romdataFileLoad(s32 fileNum, u32 *outSize)
 		}
 		// tried and failed, fall back to ROM
 		fileSlots[fileNum].source = SRC_ROM;
+	}
+
+	// special handling for audio files: check mod directory
+	if (!out && fileSlots[fileNum].name && strstr(fileSlots[fileNum].name, ".mp3")) {
+		u32 modSize = 0;
+		u8 *modData = modAudioLoad(fileSlots[fileNum].name, &modSize);
+		if (modData && modSize > 0) {
+			sysLogPrintf(LOG_NOTE, "file %d (%s) loaded from mod directory", fileNum, fileSlots[fileNum].name);
+			fileSlots[fileNum].data = modData;
+			fileSlots[fileNum].size = modSize;
+			fileSlots[fileNum].source = SRC_EXTERNAL;
+			fileSlots[fileNum].numpatches = 0;
+			out = modData;
+		}
 	}
 
 	if (!out) {

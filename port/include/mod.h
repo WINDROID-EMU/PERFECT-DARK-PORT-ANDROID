@@ -16,4 +16,6 @@ void *modAnimationLoadData(u16 num);
 
 void *modSequenceLoad(u16 num, u32 *outSize);
 
+u8 *modAudioLoad(const char *filename, u32 *outSize);
+
 #endif

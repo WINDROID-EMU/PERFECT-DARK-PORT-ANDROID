@@ -13,6 +13,7 @@
 #define MOD_TEXTURES_DIR "textures"
 #define MOD_ANIMATIONS_DIR "animations"
 #define MOD_SEQUENCES_DIR "sequences"
+#define MOD_AUDIO_DIR "audio"
 
 extern struct stagemusic g_StageTracks[];
 extern struct stageallocation g_StageAllocations8Mb[];
@@ -530,4 +531,29 @@ s32 modAnimationLoadDescriptor(u16 num, struct animtableentry *anim)
 	sysLogPrintf(LOG_NOTE, "mod: loaded external animation %04x", num);
 
 	return true;
+}
+
+u8 *modAudioLoad(const char *filename, u32 *outSize)
+{
+	static s32 dirExists = -1;
+	if (dirExists < 0) {
+		dirExists = (fsFileSize(MOD_AUDIO_DIR "/") >= 0);
+	}
+
+	if (!dirExists) {
+		return NULL;
+	}
+
+	char path[FS_MAXPATH + 1];
+	snprintf(path, sizeof(path), MOD_AUDIO_DIR "/%s", filename);
+	
+	if (fsFileSize(path) > 0) {
+		u8 *ret = fsFileLoad(path, outSize);
+		if (ret) {
+			sysLogPrintf(LOG_NOTE, "mod: loaded external audio %s", filename);
+			return ret;
+		}
+	}
+
+	return NULL;
 }
