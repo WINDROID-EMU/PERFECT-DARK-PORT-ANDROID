@@ -32,6 +32,7 @@
 
 #include "os_pfs.h"
 #include "platform.h"
+#include <stddef.h>
 
 #ifndef PLATFORM_N64
 #include <stdio.h>
@@ -43,8 +44,6 @@
 #ifdef _LANGUAGE_C_PLUS_PLUS
 extern "C" {
 #endif
-
-#include <PR/ultratypes.h>
 
 #if defined(_LANGUAGE_C) || defined(_LANGUAGE_C_PLUS_PLUS)
 
@@ -65,6 +64,8 @@ extern "C" {
 
 
 #if defined(_LANGUAGE_C) || defined(_LANGUAGE_C_PLUS_PLUS)
+
+#include <PR/ultratypes.h>
 
 /**************************************************************************
  *
@@ -89,9 +90,16 @@ extern "C" {
 /* byte string operations */
 
 #ifndef PLATFORM_OSX
+/* Avoid conflicts with Android NDK's macro definitions in <strings.h> */
+#ifndef bcopy
 extern void     bcopy(const void *, void *, size_t);
+#endif
+#ifndef bcmp
 extern int      bcmp(const void *, const void *, size_t);
+#endif
+#ifndef bzero
 extern void     bzero(void *, size_t);
+#endif
 #endif
 
 /* Printf */
