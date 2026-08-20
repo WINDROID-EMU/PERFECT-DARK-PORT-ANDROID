@@ -20,6 +20,10 @@
 #include "utils.h"
 #include "texexport.h"
 
+#ifdef HAVE_NETWORKING
+#include "net/net.h"
+#endif
+
 #include <SDL.h>
 
 #ifdef ANDROID
@@ -100,6 +104,10 @@ static void gameInit(void)
 		g_HudAlignModeL = G_ASPECT_LEFT_EXT | G_ASPECT_WIDE_EXT;
 		g_HudAlignModeR = G_ASPECT_RIGHT_EXT | G_ASPECT_WIDE_EXT;
 	}
+
+#ifdef HAVE_NETWORKING
+	netInit();
+#endif
 }
 
 static u64 lastConfigSaveTime = 0;
