@@ -162,6 +162,12 @@ u64 sysGetMicroseconds(void)
 	return ((u64)tv.tv_sec * USEC_IN_SEC + (u64)tv.tv_usec) - startTick;
 }
 
+f32 sysGetSeconds(void)
+{
+	u64 t = sysGetMicroseconds();
+	return (f32)t / 1000000.f;
+}
+
 s32 sysLogIsOpen(void)
 {
 	return (logPath[0] != '\0');
@@ -169,8 +175,8 @@ s32 sysLogIsOpen(void)
 
 void sysLogPrintf(s32 level, const char *fmt, ...)
 {
-	static const char *prefix[3] = {
-		"", "WARNING: ", "ERROR: "
+	static const char *prefix[4] = {
+		"", "WARNING: ", "ERROR: ", "CHAT: "
 	};
 
 	char logmsg[2048];
@@ -180,25 +186,30 @@ void sysLogPrintf(s32 level, const char *fmt, ...)
 	vsnprintf(logmsg, sizeof(logmsg), fmt, ap);
 	va_end(ap);
 
+	s32 baselevel = level & 0x0f;
+	s32 ischat = (level & LOGFLAG_SHOWMSG) != 0;
+
 #ifdef ANDROID
 	int android_level = ANDROID_LOG_INFO;
-	switch(level) {
+	switch(baselevel) {
 		case LOG_WARNING: android_level = ANDROID_LOG_WARN; break;
 		case LOG_ERROR: android_level = ANDROID_LOG_ERROR; break;
 		default: android_level = ANDROID_LOG_INFO; break;
 	}
-	__android_log_print(android_level, LOG_TAG, "%s%s", prefix[level], logmsg);
+	__android_log_print(android_level, LOG_TAG, "%s%s", prefix[ischat ? 3 : baselevel], logmsg);
 #else
 	if (logPath[0]) {
 		FILE *f = fopen(logPath, "ab");
 		if (f) {
-			fprintf(f, "%s%s\n", prefix[level], logmsg);
+			fprintf(f, "%s%s\n", prefix[ischat ? 3 : baselevel], logmsg);
 			fclose(f);
 		}
 	}
 
-	FILE *fout = (level == LOG_NOTE) ? stdout : stderr;
-	fprintf(fout, "%s%s\n", prefix[level], logmsg);
+	if ((level & LOGFLAG_NOCON) == 0) {
+		FILE *fout = (baselevel == LOG_NOTE || ischat) ? stdout : stderr;
+		fprintf(fout, "%s%s\n", prefix[ischat ? 3 : baselevel], logmsg);
+	}
 #endif
 }
 

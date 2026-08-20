@@ -28,6 +28,7 @@
 #define MAX_SQUADRONS          16
 #define MAX_TEAMS              8
 #define MAX_EXPLOSIONS_DEFAULT 6
+#define MAX_PLAYERNAME         15
 
 #define NUM_BOTDIFFS          6
 #define NUM_CYCLEABLE_WEAPONS 45
@@ -697,6 +698,7 @@
 #define CONTROLMODE_23 6
 #define CONTROLMODE_24 7
 #define CONTROLMODE_PC 8 // "pc port" controls; enabled in the .ini file
+#define CONTROLMODE_NA 9 // dummy controls for remote players
 
 #define COUNTDOWNTIMERREASON_AI        0x01
 #define COUNTDOWNTIMERREASON_NOCONTROL 0x10

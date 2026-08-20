@@ -8,10 +8,14 @@ extern "C" {
 #include <PR/ultratypes.h>
 
 enum LogLevel {
-  LOG_NOTE,
-  LOG_WARNING,
-  LOG_ERROR,
+  LOG_NOTE = 0,
+  LOG_WARNING = 1,
+  LOG_ERROR = 2,
 };
+
+#define LOG_CHAT (LOG_NOTE | LOGFLAG_SHOWMSG)
+#define LOGFLAG_SHOWMSG (1 << 5)
+#define LOGFLAG_NOCON (1 << 6)
 
 void sysInitArgs(s32 argc, const char **argv);
 void sysInit(void);
@@ -21,6 +25,7 @@ const char *sysArgGetString(const char *arg);
 s32 sysArgGetInt(const char *arg, s32 defval);
 
 u64 sysGetMicroseconds(void);
+f32 sysGetSeconds(void);
 
 void sysFatalError(const char *fmt, ...) __attribute__((noreturn));
 
