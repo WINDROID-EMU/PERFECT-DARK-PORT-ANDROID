@@ -15,6 +15,8 @@
 #include "config.h"
 #include "mpsetups.h"
 #include "net/net.h"
+#include "console.h"
+#include "system.h"
 
 extern MenuItemHandlerResult menuhandlerMainMenuCombatSimulator(s32 operation, struct menuitem *item, union handlerdata *data);
 extern MenuItemHandlerResult menuhandlerMpAdvancedSetup(s32 operation, struct menuitem *item, union handlerdata *data);
